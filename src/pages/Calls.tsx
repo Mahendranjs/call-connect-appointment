@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -81,39 +80,31 @@ const Calls = () => {
   };
 
   const getStatusBadge = (status: string) => {
-    const config = {
-      missed: { variant: 'destructive', label: 'Missed' },
-      answered: { variant: 'default', label: 'Answered', className: 'bg-green-100 text-green-800' },
-      voicemail: { variant: 'secondary', label: 'Voicemail', className: 'bg-orange-100 text-orange-800' }
-    };
-    
-    const { variant, label, className } = config[status as keyof typeof config] || 
-                                        { variant: 'outline', label: status };
-    
-    return (
-      <Badge variant={variant as any} className={className}>
-        {label}
-      </Badge>
-    );
+    switch (status) {
+      case 'missed':
+        return <Badge variant="destructive">Missed</Badge>;
+      case 'answered':
+        return <Badge variant="default" className="bg-green-100 text-green-800">Answered</Badge>;
+      case 'voicemail':
+        return <Badge variant="secondary" className="bg-orange-100 text-orange-800">Voicemail</Badge>;
+      default:
+        return <Badge variant="outline">{status}</Badge>;
+    }
   };
 
   const getSMSBadge = (smsStatus: string | null) => {
     if (!smsStatus) return null;
     
-    const config = {
-      sent: { variant: 'secondary', label: 'SMS Sent', className: 'bg-blue-100 text-blue-800' },
-      delivered: { variant: 'default', label: 'Delivered', className: 'bg-green-100 text-green-800' },
-      failed: { variant: 'destructive', label: 'Failed' }
-    };
-    
-    const { variant, label, className } = config[smsStatus as keyof typeof config] || 
-                                        { variant: 'outline', label: smsStatus };
-    
-    return (
-      <Badge variant={variant as any} className={className}>
-        {label}
-      </Badge>
-    );
+    switch (smsStatus) {
+      case 'sent':
+        return <Badge variant="secondary" className="bg-blue-100 text-blue-800">SMS Sent</Badge>;
+      case 'delivered':
+        return <Badge variant="default" className="bg-green-100 text-green-800">Delivered</Badge>;
+      case 'failed':
+        return <Badge variant="destructive">Failed</Badge>;
+      default:
+        return <Badge variant="outline">{smsStatus}</Badge>;
+    }
   };
 
   return (
