@@ -54,7 +54,7 @@ export type Database = {
             foreignKeyName: "appointments_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
@@ -72,6 +72,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      businesses: {
+        Row: {
+          call_recording_enabled: boolean | null
+          created_at: string | null
+          id: string
+          name: string
+          owner_id: string
+          sms_auto_followup: boolean | null
+          subscription_plan: string | null
+          twilio_auth_token: string | null
+          twilio_phone_number: string | null
+          twilio_sid: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          call_recording_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          name: string
+          owner_id: string
+          sms_auto_followup?: boolean | null
+          subscription_plan?: string | null
+          twilio_auth_token?: string | null
+          twilio_phone_number?: string | null
+          twilio_sid?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          call_recording_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          owner_id?: string
+          sms_auto_followup?: boolean | null
+          subscription_plan?: string | null
+          twilio_auth_token?: string | null
+          twilio_phone_number?: string | null
+          twilio_sid?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       calls: {
         Row: {
@@ -109,7 +151,7 @@ export type Database = {
             foreignKeyName: "calls_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
@@ -160,13 +202,14 @@ export type Database = {
             foreignKeyName: "clients_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
       }
       profiles: {
         Row: {
+          business_id: string | null
           business_name: string | null
           created_at: string
           email: string
@@ -177,6 +220,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          business_id?: string | null
           business_name?: string | null
           created_at?: string
           email: string
@@ -187,6 +231,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          business_id?: string | null
           business_name?: string | null
           created_at?: string
           email?: string
@@ -196,7 +241,15 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"] | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sms_logs: {
         Row: {
@@ -250,7 +303,7 @@ export type Database = {
             foreignKeyName: "sms_logs_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
           {
@@ -305,7 +358,7 @@ export type Database = {
             foreignKeyName: "sms_templates_business_id_fkey"
             columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
