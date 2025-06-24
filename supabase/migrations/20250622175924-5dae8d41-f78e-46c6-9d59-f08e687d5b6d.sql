@@ -170,3 +170,10 @@ DROP TRIGGER IF EXISTS on_profile_created ON public.profiles;
 CREATE TRIGGER on_profile_created
   AFTER INSERT ON public.profiles
   FOR EACH ROW EXECUTE PROCEDURE public.create_business_for_admin();
+
+-- Create the enum
+CREATE TYPE "user_role" AS ENUM ('admin', 'staff');
+
+-- Then create or update the table that uses it
+ALTER TABLE profiles
+  ADD COLUMN role user_role;
