@@ -5,29 +5,29 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Link } from 'react-router-dom';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
 export function RegisterForm() {
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [role, setRole] = useState<'admin' | 'staff'>('staff');
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (password !== confirmPassword) {
-      return;
-    }
-
     setLoading(true);
     
     try {
-      await signUp(email, password, fullName);
+      const { error } = await signUp(email, password, fullName, role);
+      if (!error) {
+        navigate('/login');
+      }
     } finally {
       setLoading(false);
     }
@@ -38,7 +38,7 @@ export function RegisterForm() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
         <CardDescription className="text-center">
-          Enter your information to create your account
+          Enter your information to create a new account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -77,28 +77,22 @@ export function RegisterForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
+              minLength={6}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <Input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              disabled={loading}
-            />
-            {password !== confirmPassword && confirmPassword && (
-              <p className="text-sm text-red-600">Passwords do not match</p>
-            )}
+            <Label htmlFor="role">Role</Label>
+            <Select value={role} onValueChange={(value: 'admin' | 'staff') => setRole(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select your role" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">Admin</SelectItem>
+                <SelectItem value="staff">Staff</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={loading || password !== confirmPassword}
-          >
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Account
           </Button>
@@ -106,7 +100,7 @@ export function RegisterForm() {
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
         <Separator />
-        <div className="text-sm text-center">
+        <div className="text-sm text-center text-muted-foreground">
           Already have an account?{' '}
           <Link to="/login" className="text-primary hover:underline">
             Sign in

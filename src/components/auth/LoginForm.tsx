@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Loader2 } from 'lucide-react';
 
@@ -14,13 +14,17 @@ export function LoginForm() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
     try {
-      await signIn(email, password);
+      const { error } = await signIn(email, password);
+      if (!error) {
+        navigate('/dashboard');
+      }
     } finally {
       setLoading(false);
     }
@@ -31,7 +35,7 @@ export function LoginForm() {
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center">Sign In</CardTitle>
         <CardDescription className="text-center">
-          Enter your credentials to access your account
+          Enter your email and password to access your account
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -67,17 +71,15 @@ export function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="flex flex-col space-y-4">
+        <Link to="/forgot-password" className="text-sm text-center hover:underline">
+          Forgot your password?
+        </Link>
         <Separator />
-        <div className="flex flex-col space-y-2 text-sm text-center">
-          <Link to="/forgot-password" className="text-primary hover:underline">
-            Forgot your password?
+        <div className="text-sm text-center text-muted-foreground">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-primary hover:underline">
+            Sign up
           </Link>
-          <div>
-            Don't have an account?{' '}
-            <Link to="/register" className="text-primary hover:underline">
-              Sign up
-            </Link>
-          </div>
         </div>
       </CardFooter>
     </Card>
