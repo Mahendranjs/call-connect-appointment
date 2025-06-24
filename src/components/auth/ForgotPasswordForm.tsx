@@ -51,7 +51,7 @@ export function ForgotPasswordForm() {
               Back to Sign In
             </Button>
           </Link>
-        </CardFootder>
+        </CardFooter>
       </Card>
     );
   }
