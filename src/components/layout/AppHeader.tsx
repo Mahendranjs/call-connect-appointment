@@ -14,9 +14,32 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useTheme } from 'next-themes';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { Badge } from "@/components/ui/badge";
 
 export function AppHeader() {
   const { theme, setTheme } = useTheme();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
+  };
+
+  const handleProfile = () => {
+    navigate('/profile');
+  };
+
+  // Get user's initials for avatar
+  const getUserInitials = () => {
+    const fullName = user?.user_metadata?.full_name || user?.email || '';
+    return fullName.split(' ').map((name: string) => name[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  // Get user role from metadata
+  const userRole = user?.user_metadata?.role || 'staff';
 
   return (
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -58,22 +81,29 @@ export function AppHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full transition-all duration-200 hover:scale-110">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/avatars/01.png" alt="User" />
-                  <AvatarFallback>JD</AvatarFallback>
+                  <AvatarImage src={user?.user_metadata?.avatar_url} alt="User" />
+                  <AvatarFallback>{getUserInitials()}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 animate-in slide-in-from-top-2" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">John Doe</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium leading-none">
+                      {user?.user_metadata?.full_name || user?.email}
+                    </p>
+                    <Badge variant={userRole === 'admin' ? 'default' : 'secondary'} className="text-xs">
+                      {userRole}
+                    </Badge>
+                  </div>
                   <p className="text-xs leading-none text-muted-foreground">
-                    john@example.com
+                    {user?.email}
                   </p>
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="transition-colors cursor-pointer">
+              <DropdownMenuItem onClick={handleProfile} className="transition-colors cursor-pointer">
                 <User className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
@@ -82,7 +112,7 @@ export function AppHeader() {
                 <span>Settings</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="transition-colors cursor-pointer text-red-600">
+              <DropdownMenuItem onClick={handleSignOut} className="transition-colors cursor-pointer text-red-600">
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>

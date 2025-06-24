@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Home, Phone, Users, Calendar, Settings, BarChart3, CreditCard, MessageSquare } from 'lucide-react';
+import { Home, Phone, Users, Calendar, Settings, BarChart3, CreditCard, MessageSquare, User } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -51,6 +51,14 @@ const navigationItems = [
     url: "/billing",
     icon: CreditCard,
   },
+];
+
+const accountItems = [
+  {
+    title: "Profile",
+    url: "/profile",
+    icon: User,
+  },
   {
     title: "Settings",
     url: "/settings",
@@ -81,6 +89,28 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton 
+                    asChild 
+                    isActive={location.pathname === item.url}
+                    className="transition-all duration-200 hover:bg-accent"
+                  >
+                    <Link to={item.url} className="flex items-center gap-2">
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Account</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {accountItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild 
